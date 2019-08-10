@@ -17,6 +17,11 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.firebase.client.DataSnapshot;
+import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
+import com.firebase.client.Query;
+import com.firebase.client.ValueEventListener;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -27,14 +32,15 @@ import java.util.Iterator;
 public class UserListActivity extends AppCompatActivity {
 
     ListView listView;
-    ArrayList<String> storeUsers = new ArrayList<>();
+    ArrayList<ListViewDetails> storeUsers = new ArrayList<ListViewDetails>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_list);
 
-        setTitle(User.name + " Messages");
+        Firebase.setAndroidContext(this);
+        setTitle(User.name + "'s" + " Messages");
 
         listView = findViewById(R.id.listView);
 
@@ -44,31 +50,42 @@ public class UserListActivity extends AppCompatActivity {
 
         //Now, populate the listview
         listView.setVisibility(View.VISIBLE);
-        final ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, storeUsers);
+        final ListAdapter adapter = new ListAdapter(this, R.layout.custom_list_view, storeUsers);
         listView.setAdapter(adapter);
 
+
         RequestQueue queue = Volley.newRequestQueue(this);
-        String url ="https://chat-application-55873.firebaseio.com/users.json";
+        String url = "https://chat-application-55873.firebaseio.com/users.json";
+        //Retrieves each users full name, username and last message to populate list
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
                         try {
                             JSONObject jsonObject = new JSONObject(response);
-                            //Returns iterator of the String names in object
-                            Log.i("Response", response);
-                            Iterator i = jsonObject.keys();
-                            String key = "";
 
-                            while(i.hasNext()) {
-                                key = i.next().toString();
+                            //Returns iterator of the String names in object
+                            Iterator i = jsonObject.keys();
+                            String username = "";
+                            String fullName = "";
+                            String lastMessage = "";
+
+                            while (i.hasNext()) {
+
+                                username = i.next().toString();
+                                fullName = jsonObject.getJSONObject(username).getString("name").toString();
+                                lastMessage = jsonObject.getJSONObject(username).getString("lastMessage").toString();
 
                                 //For all the users excluding self
-                                if (!key.equals(User.user)) {
-                                    Log.i("Key", key);
-                                    storeUsers.add(key);
-                                    adapter.notifyDataSetChanged();
+                                if (!username.equals(User.user)) {
+                                    Log.i("Key", username);
+                                    Log.i("Value", fullName);
+                                    Log.i("Message", lastMessage);
+
+                                    ListViewDetails details = new ListViewDetails(username, fullName, lastMessage);
+                                    storeUsers.add(details);
                                 }
+                                adapter.notifyDataSetChanged();
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -84,16 +101,17 @@ public class UserListActivity extends AppCompatActivity {
         });
 
         queue.add(stringRequest);
-
         progressDialog.dismiss();
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                User.to = storeUsers.get(position);
+                User.to = storeUsers.get(position).getContactUsername();
                 Intent intent = new Intent(UserListActivity.this, ChatActivity.class);
                 startActivity(intent);
             }
         });
     }
+
+
 }

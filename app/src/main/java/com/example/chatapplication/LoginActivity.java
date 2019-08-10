@@ -20,8 +20,6 @@ import com.android.volley.toolbox.Volley;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.StringReader;
-
 public class LoginActivity extends AppCompatActivity {
 
     EditText username,password;
@@ -35,10 +33,19 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         //Define the views
-        username = findViewById(R.id.unField);
-        password = findViewById(R.id.pwField);
+        username = findViewById(R.id.emailField);
+        password = findViewById(R.id.usernameField);
         loginBtn = findViewById(R.id.loginBtn);
         goToRegister = findViewById(R.id.registerBtn);
+
+
+        goToRegister.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
+                startActivity(intent);
+            }
+        });
 
         //Functionality for login
         loginBtn.setOnClickListener(new View.OnClickListener() {

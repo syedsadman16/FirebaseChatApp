@@ -26,7 +26,7 @@ public class ChatActivity extends AppCompatActivity {
     ScrollView scrollView;
     Button sendBtn;
     EditText textField;
-    Firebase referenceUser, referenceChatWith;
+    Firebase referenceUser, referenceChatWith, referenceMsg;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +45,7 @@ public class ChatActivity extends AppCompatActivity {
         //Keeps track of the chat for both users
         referenceUser = new Firebase("https://chat-application-55873.firebaseio.com/messages/"+User.user+"_"+User.to);
         referenceChatWith = new Firebase("https://chat-application-55873.firebaseio.com/messages/"+User.to+"_"+User.user);
+        referenceMsg = new Firebase("https://chat-application-55873.firebaseio.com/users");
 
         //Click listener for send button
         sendBtn.setOnClickListener(new View.OnClickListener() {
@@ -54,18 +55,25 @@ public class ChatActivity extends AppCompatActivity {
                if(!message.equals("")){
                    //Firebase reference can push Maps among other data structures
                     Map<String, String> chatHist = new HashMap<String, String>();
+
                     //Creates objects called messages and user
                     chatHist.put("message", message);
                     chatHist.put("user", User.user);
+
                     // pushes with values with unique reference ids
                     referenceUser.push().setValue(chatHist);
                     referenceChatWith.push().setValue(chatHist);
-                }
+
+                    //Keep track of the last users
+                    referenceMsg.child(User.user).child("lastMessage").setValue("You:"+message);
+                    referenceMsg.child(User.to).child("lastMessage").setValue(User.user+":"+message);
+
+               }
                textField.setText("");
             }
         });
 
-        //Add a listener to get chat data
+        //Receive events about changes in the child locations - listener to get chat data
         referenceUser.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
