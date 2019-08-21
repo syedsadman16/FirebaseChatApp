@@ -9,17 +9,23 @@ Submitted by: **Syed Sadman**
 # Features
 The app has the following features:
 
-* [/] Users can sign in and register
+* [X] Users can sign in and register
 * [X] Users can chat with other users of the app
 * [ ] Users can engage in a group chat 
 * [ ] Share images and videos
 
 
 
+Quick Demo             
+:-------------------------:
+<img src='demo.gif' title='Demo' width='' alt='Demo' />
+
+
+
+
 
 ## To-DO
 
-- Custom Listviews
 - Group chat option
 - Ability to share multimedia
 

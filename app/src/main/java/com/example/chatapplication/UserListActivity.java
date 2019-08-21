@@ -53,6 +53,7 @@ public class UserListActivity extends AppCompatActivity {
         final ListAdapter adapter = new ListAdapter(this, R.layout.custom_list_view, storeUsers);
         listView.setAdapter(adapter);
 
+        adapter.notifyDataSetChanged();
 
         RequestQueue queue = Volley.newRequestQueue(this);
         String url = "https://chat-application-55873.firebaseio.com/users.json";

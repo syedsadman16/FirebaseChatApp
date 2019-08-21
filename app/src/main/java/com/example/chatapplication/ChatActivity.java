@@ -39,6 +39,7 @@ public class ChatActivity extends AppCompatActivity {
         textField = findViewById(R.id.textInput);
 
         setTitle(User.to);
+        scrollView.fullScroll(View.FOCUS_DOWN);
 
         Firebase.setAndroidContext(this);
         //reference to create json keys in firebase
@@ -70,6 +71,7 @@ public class ChatActivity extends AppCompatActivity {
 
                }
                textField.setText("");
+               scrollView.fullScroll(View.FOCUS_DOWN);
             }
         });
 

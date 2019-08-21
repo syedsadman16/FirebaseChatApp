@@ -34,9 +34,9 @@ public class RegisterActivity extends AppCompatActivity {
 
         submitBtn = findViewById(R.id.submit);
         cancelBtn = findViewById(R.id.cancel);
-        usernameField = findViewById(R.id.emailField);
+        usernameField = findViewById(R.id.usernameField);
         nameField = findViewById(R.id.nameField);
-        passwordField = findViewById(R.id.usernameField);
+        passwordField = findViewById(R.id.passwordField);
         emailField = findViewById(R.id.emailField);
 
         //Firebase library init
